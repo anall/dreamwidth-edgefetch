@@ -329,17 +329,18 @@ void Crawler::_finalize(size_t *fvRet, bool midSave) {
 
     _newUsers.clear();
 
+    // FIXME: Use JSON generation
+    FILE *data = fopen("data.json","w");
+    if ( data ) {
+        fprintf(data,"{\"seen\":%lu,\"pending_round\":%lu,\"to_fetch\":%lu,\"mid\":%i}",_seen.size(),_pendToFetch.size(),_toFetch.size(),midSave);
+        fclose(data);
+    }
+
     if ( midSave ) return;
 
     _toFetch.insert( _pendToFetch.begin(), _pendToFetch.end() );
     _pendToFetch.clear();
 
-    // FIXME: Use JSON generation
-    FILE *data = fopen("data.json","w");
-    if ( data ) {
-        fprintf(data,"{\"seen\":%lu,\"to_fetch\":%lu}",_seen.size(),_toFetch.size());
-        fclose(data);
-    }
 }
 
 void Crawler::_load() {
