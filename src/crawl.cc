@@ -5,7 +5,7 @@
 #include <set>
 #include <deque>
 
-#if HAS_CPP11
+#ifdef HAS_CPP11
 #include <unordered_map>
 #include <unordered_set>
 
@@ -333,6 +333,13 @@ void Crawler::_finalize(size_t *fvRet, bool midSave) {
 
     _toFetch.insert( _pendToFetch.begin(), _pendToFetch.end() );
     _pendToFetch.clear();
+
+    // FIXME: Use JSON generation
+    FILE *data = fopen("data.json","w");
+    if ( data ) {
+        fprintf(data,"{\"seen\":%lu,\"to_fetch\":%lu}",_seen.size(),_toFetch.size());
+        fclose(data);
+    }
 }
 
 void Crawler::_load() {
