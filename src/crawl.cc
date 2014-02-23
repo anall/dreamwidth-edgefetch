@@ -400,7 +400,7 @@ void Crawler::runCrawl() {
             CrawlResult res = fetchUser( what );
             _fetched[ res._name ] = res;
 
-            if ( ( tFetch % 250 ) == 0 && tFetch > 0 ) wantsSave = true;
+            if ( ( tFetch & 255 ) == 0 && tFetch > 0 ) wantsSave = true;
             if ( wantsTerminate || wantsSave )
                 break;
         }
