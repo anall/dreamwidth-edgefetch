@@ -79,7 +79,7 @@ private:
         ~CrawlResult() {}
     };
 
-    uint64_t totalFetched = 0;
+    uint64_t totalFetched;
 
     local::unordered_map<std::string,UserData> _newUsers;
     local::unordered_set<std::string> _seen;
@@ -133,7 +133,7 @@ static void _usr1(int v) {
     fflush(stdout);
 }
 
-Crawler::Crawler() : _bucket(3,3) {
+Crawler::Crawler() : _bucket(3,3), totalFetched(0) {
     _curl = curl_easy_init();
     assert( _curl );
 
@@ -382,7 +382,7 @@ void Crawler::_load() {
     }    
     printf("-------- LOADED %lu rows\n", ct);
 
-    totalFetched = _seen.count();
+    totalFetched = _seen.size();
     sqlite3_finalize(stmt);
 }
 
