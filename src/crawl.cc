@@ -79,6 +79,8 @@ private:
         ~CrawlResult() {}
     };
 
+    uint64_t totalFetched = 0;
+
     local::unordered_map<std::string,UserData> _newUsers;
     local::unordered_set<std::string> _seen;
 
@@ -271,6 +273,8 @@ void Crawler::_finalize(size_t *fvRet, bool midSave) {
     {
         local::unordered_map<std::string, CrawlResult>::iterator it;
 
+        totalFetched += _fetched.size();
+
         for ( it = _fetched.begin(); it != _fetched.end(); it++ ) {
             const std::string &name = (*it).first;
             const CrawlResult &cr = (*it).second;
@@ -332,7 +336,7 @@ void Crawler::_finalize(size_t *fvRet, bool midSave) {
     // FIXME: Use JSON generation
     FILE *data = fopen("data.json","w");
     if ( data ) {
-        fprintf(data,"{\"seen\":%lu,\"pending_round\":%lu,\"to_fetch\":%lu,\"mid\":%i}",_seen.size(),_pendToFetch.size(),_toFetch.size(),midSave);
+        fprintf(data,"{\"seen\":%lu,\"pending_round\":%lu,\"to_fetch\":%lu,\"mid\":%i}",totalFetched,_pendToFetch.size(),_toFetch.size(),midSave);
         fclose(data);
     }
 
@@ -377,6 +381,8 @@ void Crawler::_load() {
         }
     }    
     printf("-------- LOADED %lu rows\n", ct);
+
+    totalFetched = _seen.count();
     sqlite3_finalize(stmt);
 }
 
